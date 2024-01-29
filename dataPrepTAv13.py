@@ -91,15 +91,14 @@ def average_decay(data, x=-1000, y=-1, units='ns', label='label me',
                   linestyle=None,tcorrect=True, normalise=False, ax=None, maxTime=-1, 
                   xaxis='symlog', yaxis='linear', tcorrectadjust=0,constant=0,legendTitle='Legend',yMin=.00000001):
     selected_wls = data[:, wlmin:wlmax] # Selects the wavelengths of interest
-    print(selected_wls)
-   
+    
     time = data[1:maxTime, 0].round(1) # Selects the timepoints of interest
-    time_1 = np.where(time == 1)[0][0] # Finds the index of the timepoint 1 ns (close enough to max signal)
-    pos_signal = np.where(y * selected_wls[time_1,:] > 0)[0] # Finds the indices of the wavelengths with a positive signal
-    signal = x * np.mean(selected_wls[1:maxTime, pos_signal], axis=1)  # Averages the selected wavelengths and multiplies by x
+    #time_1 = np.where(time == 1)[0][0] # Finds the index of the timepoint 1 ns (close enough to max signal)
+    #pos_signal = np.where(y * selected_wls[time_1,:] > 0)[0] # Finds the indices of the wavelengths with a positive signal
+    #signal = x * np.mean(selected_wls[1:maxTime, pos_signal], axis=1)  # Averages the selected wavelengths and multiplies by x
+    signal = data[1:maxTime, wlmin:wlmax].mean(axis=1)
     
-    
-    
+    print(time.shape,signal.shape)
     max_signal = signal.argmax() + tcorrectadjust # Finds the index of the maximum signal
     if tcorrect:
         time = time[max_signal:] - time[max_signal] #Corrects time to start at 0
@@ -114,13 +113,13 @@ def average_decay(data, x=-1000, y=-1, units='ns', label='label me',
     
     if plot ==True:
         fig, ax = plt.subplots() if ax is None else (None, ax)
-        ax.plot(decay[:,0], decay[:,1]+constant, marker,alpha=0.6,label=label)
+        ax.plot(decay[0,:], decay[1,:]+constant, marker,alpha=0.6,label=label)
         ax.set_yscale(yaxis)
         ax.set_xscale(xaxis)
         ax.set_title(title)
         ax.set_xlabel(f'Time/ {units}')
         ax.set_ylabel(f'${{\Delta}}$T/T{" Norm." if normalise else ""}')
-        #ax.set_xlim(time[0], time[tEnd])
+        ax.set_xlim(time[0], time[-1])
         if normalise:
             ax.set_ylim(yMin,1)
         ax.legend(title=legendTitle)
