@@ -93,12 +93,10 @@ def average_decay(data, x=-1000, y=-1, units='ns', label='label me',
     selected_wls = data[:, wlmin:wlmax] # Selects the wavelengths of interest
     
     time = data[1:maxTime, 0].round(1) # Selects the timepoints of interest
-    #time_1 = np.where(time == 1)[0][0] # Finds the index of the timepoint 1 ns (close enough to max signal)
-    #pos_signal = np.where(y * selected_wls[time_1,:] > 0)[0] # Finds the indices of the wavelengths with a positive signal
-    #signal = x * np.mean(selected_wls[1:maxTime, pos_signal], axis=1)  # Averages the selected wavelengths and multiplies by x
-    signal = data[1:maxTime, wlmin:wlmax].mean(axis=1)
+
+    signal = x* data[1:maxTime, wlmin:wlmax].mean(axis=1)
     
-    print(time.shape,signal.shape)
+
     max_signal = signal.argmax() + tcorrectadjust # Finds the index of the maximum signal
     if tcorrect:
         time = time[max_signal:] - time[max_signal] #Corrects time to start at 0
